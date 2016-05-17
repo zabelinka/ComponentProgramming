@@ -35,8 +35,7 @@ namespace ComponentIntegration
 
         private void errorMessage(string message)
         {
-            answerTB.Clear();
-            answerTB.Text = "ОШИБКА!" + Environment.NewLine + message;
+            answerTB.Text += "ОШИБКА!" + message + Environment.NewLine;
         }
 
         // read entered data
@@ -44,28 +43,6 @@ namespace ComponentIntegration
         {
             function = functionTB.Text;
         }
-        private void lowerLimitTB_TextChanged(object sender, EventArgs e)
-        {
-            if (!double.TryParse(lowerLimitTB.Text, out lowerLimit))
-            {
-                errorMessage("Некорректный нижний предел интегрирования!");
-            }
-        }
-        private void upperLimitTB_TextChanged(object sender, EventArgs e)
-        {
-            if (!double.TryParse(upperLimitTB.Text, out upperLimit))
-            {
-                errorMessage("Некорректный верхний предел интегрирования!");
-            }
-        }
-        private void epsTB_TextChanged(object sender, EventArgs e)
-        {
-            if (!double.TryParse(epsTB.Text, out eps))
-            {
-                errorMessage("Некорректное значение точности!");
-            }
-        }
-
 
         private void RadioButton_CheckedChanged(object sender, EventArgs e)
         {
@@ -104,22 +81,35 @@ namespace ComponentIntegration
 
         private bool checkInputData()
         {
+            bool result = true;
             // ln(0), ln(negative)
+            if (!double.TryParse(lowerLimitTB.Text, out lowerLimit))
+            {
+                errorMessage("Некорректный нижний предел интегрирования!");
+                result = false;
+            }
+            if (!double.TryParse(upperLimitTB.Text, out upperLimit))
+            {
+                errorMessage("Некорректный верхний предел интегрирования!");
+                result = false;
+            }
+            if (!double.TryParse(epsTB.Text, out eps))
+            {
+                errorMessage("Некорректное значение требуемой точности!");
+                result = false;
+            }
             if (coefs[1] * upperLimit + coefs[2] <= 0 || coefs[1] * lowerLimit + coefs[2] <= 0)
             {
-
-                return false;
+                errorMessage("Невозможно вычислить логарифм при данных коэффициентах и пределах интегрирования!");
+                result = false;
             }
-            return true;
+
+            return result;
         }
 
         private void goButton_Click(object sender, EventArgs e)
         {
             answerTB.Clear();
-            if (!checkInputData())
-            {
-                return;
-            }
 
             Parser p = new Parser();
             coefs = p.parse(function);
@@ -135,6 +125,11 @@ namespace ComponentIntegration
             if (method == null)
             {
                 errorMessage("Выберите метод интегрирования!");
+                return;
+            }
+            // wrong parameters
+            if (!checkInputData())
+            {
                 return;
             }
            

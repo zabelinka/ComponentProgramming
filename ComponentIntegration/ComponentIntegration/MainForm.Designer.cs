@@ -82,7 +82,6 @@
             this.epsTB.Name = "epsTB";
             this.epsTB.Size = new System.Drawing.Size(95, 30);
             this.epsTB.TabIndex = 3;
-            this.epsTB.TextChanged += new System.EventHandler(this.epsTB_TextChanged);
             // 
             // upperLimitTB
             // 
@@ -90,7 +89,6 @@
             this.upperLimitTB.Name = "upperLimitTB";
             this.upperLimitTB.Size = new System.Drawing.Size(39, 20);
             this.upperLimitTB.TabIndex = 3;
-            this.upperLimitTB.TextChanged += new System.EventHandler(this.upperLimitTB_TextChanged);
             // 
             // lowerLimitTB
             // 
@@ -98,7 +96,6 @@
             this.lowerLimitTB.Name = "lowerLimitTB";
             this.lowerLimitTB.Size = new System.Drawing.Size(39, 20);
             this.lowerLimitTB.TabIndex = 3;
-            this.lowerLimitTB.TextChanged += new System.EventHandler(this.lowerLimitTB_TextChanged);
             // 
             // epsLBL
             // 

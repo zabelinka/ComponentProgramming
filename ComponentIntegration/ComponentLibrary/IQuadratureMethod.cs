@@ -20,7 +20,8 @@ namespace ComponentLibrary
     {
         public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
+            double M = 0;
+            int N = (int) Math.Floor(Math.Pow(upperLimit - lowerLimit, 2) / (2 * eps) * M);
             double h = (upperLimit - lowerLimit) / N;     // step
             double result = 0;
 

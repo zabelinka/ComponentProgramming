@@ -28,14 +28,15 @@ namespace ComponentLibrary
         // calculate the value of the function of type ax*ln(bx+c) with argument x
         public double calculate(double x)
         {
-            if (b * x + c <= 0)
-            {
-                return Double.NaN;
-            }
             double result;
             result = a * x * Math.Log(b * x + c);
             return result;
         }
+    }
+
+    public class DerivativeComponent : Component
+    {
+
     }
 
 }
