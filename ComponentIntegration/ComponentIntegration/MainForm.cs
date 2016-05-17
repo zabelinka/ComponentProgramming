@@ -14,13 +14,13 @@ namespace ComponentIntegration
     public partial class MainForm : Form
     {
         string function;
-        float lowerLimit;
-        float upperLimit;
-        float eps;
-        float[] coefs;          // the coefficients given by parser from function
+        double lowerLimit;
+        double upperLimit;
+        double eps;
+        double[] coefs;          // the coefficients given by parser from function
         IQuadratureMethod[] method;     // the method of integration
         Container cont;                 // the container for components
-        float result;
+        double result;
         bool inputError;                // true when input data are incorrect and need to display error message
 
         public MainForm()
@@ -46,21 +46,21 @@ namespace ComponentIntegration
         }
         private void lowerLimitTB_TextChanged(object sender, EventArgs e)
         {
-            if (!float.TryParse(lowerLimitTB.Text, out lowerLimit))
+            if (!double.TryParse(lowerLimitTB.Text, out lowerLimit))
             {
                 errorMessage("Некорректный нижний предел интегрирования!");
             }
         }
         private void upperLimitTB_TextChanged(object sender, EventArgs e)
         {
-            if (!float.TryParse(upperLimitTB.Text, out upperLimit))
+            if (!double.TryParse(upperLimitTB.Text, out upperLimit))
             {
                 errorMessage("Некорректный верхний предел интегрирования!");
             }
         }
         private void epsTB_TextChanged(object sender, EventArgs e)
         {
-            if (!float.TryParse(epsTB.Text, out eps))
+            if (!double.TryParse(epsTB.Text, out eps))
             {
                 errorMessage("Некорректное значение точности!");
             }
@@ -102,8 +102,25 @@ namespace ComponentIntegration
             
         }
 
+        private bool checkInputData()
+        {
+            // ln(0), ln(negative)
+            if (coefs[1] * upperLimit + coefs[2] <= 0 || coefs[1] * lowerLimit + coefs[2] <= 0)
+            {
+
+                return false;
+            }
+            return true;
+        }
+
         private void goButton_Click(object sender, EventArgs e)
         {
+            answerTB.Clear();
+            if (!checkInputData())
+            {
+                return;
+            }
+
             Parser p = new Parser();
             coefs = p.parse(function);
             p.Dispose();
@@ -122,7 +139,6 @@ namespace ComponentIntegration
             }
            
             // calculate and write answer
-            answerTB.Clear();
             answerTB.Text = "Коэффициенты: " + Environment.NewLine;
             for (int i = 0; i < coefs.Length; ++i)
             {

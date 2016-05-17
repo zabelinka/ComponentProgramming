@@ -10,15 +10,30 @@ namespace ComponentLibrary
 {
     public interface IQuadratureMethod : IComponent
     {
-        float calculate(float lowerLimit, float upperLimit, float[] coefs, float eps);
-        string name { get; }  
+        double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps);
+        string name { get; }
     }
+
+
 
     public class RectangleMethod : Component, IQuadratureMethod
     {
-        public float calculate(float lowerLimit, float upperLimit, float[] coefs, float eps)
+        public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            return 1.0f;
+            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
+            double h = (upperLimit - lowerLimit) / N;     // step
+            double result = 0;
+
+            FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
+
+            // left corner approximation
+            for (int i = 0; i < N; i++)
+            {
+                double x = lowerLimit + h * i;
+                result += funValComp.calculate(x); 
+            }
+            funValComp.Dispose();
+            return result * h;
         }
         string IQuadratureMethod.name { 
             get { return "Метод прямоугольников: "; }
@@ -27,9 +42,22 @@ namespace ComponentLibrary
 
     public class TrapezeMethod : Component, IQuadratureMethod
     {
-        public float calculate(float lowerLimit, float upperLimit, float[] coefs, float eps)
+        public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            return 2.0f;
+            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
+            double h = (upperLimit - lowerLimit) / N;     // step
+            double result = 0;
+
+            FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
+
+            // trapezoidal rule
+            for (int i = 0; i < N; i++)
+            {
+                double x = lowerLimit + h * i;
+                result += (funValComp.calculate(x) + funValComp.calculate(x + h)) / 2.0;
+            }
+            funValComp.Dispose();
+            return result * h;
         }
         string IQuadratureMethod.name
         {
@@ -39,9 +67,22 @@ namespace ComponentLibrary
 
     public class SimpsonMethod : Component, IQuadratureMethod
     {
-        public float calculate(float lowerLimit, float upperLimit, float[] coefs, float eps)
+        public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            return 3.0f;
+            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
+            double h = (upperLimit - lowerLimit) / N;     // step
+            double result = 0;
+
+            FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
+
+            // Simpson's rule
+            for (int i = 0; i < N; i++)
+            {
+                double x = lowerLimit + h * i;
+                result += funValComp.calculate(x) + 4 * funValComp.calculate(x + h / 2.0) + funValComp.calculate(x + h);
+            }
+            funValComp.Dispose();
+            return result * h / 6.0;
         }
         string IQuadratureMethod.name
         {

@@ -12,14 +12,14 @@ namespace ComponentLibrary
 {
     public class Parser : Component
     {
-        private float parseNumber(string number)
+        private double parseNumber(string number)
         {
-            var translation = new Dictionary<string, float>(){
+            var translation = new Dictionary<string, double>(){
                 {"-", -1},
                 {"", 1}
             };
-            float res;
-            if (!float.TryParse(number, out res))
+            double res;
+            if (!double.TryParse(number, out res))
             {
                 res = translation[number];
             }
@@ -27,7 +27,7 @@ namespace ComponentLibrary
             return res;
         }
 
-        public float[] parse(string function)
+        public double[] parse(string function)
         {
             var stringWithoutWhitespaces = Regex.Replace(function, @"\s", "");          // delete all whitespaces
 
@@ -36,7 +36,7 @@ namespace ComponentLibrary
                 RegexOptions.IgnorePatternWhitespace);
             var match = regGlobal.Match(stringWithoutWhitespaces);
             // expect exactly three coefs: before ln, before x inside parentheses and free member
-            float[] coefs = new float[3];
+            double[] coefs = new double[3];
             coefs[0] = this.parseNumber(match.Groups[1].Value);
 
             Regex regInsideParentheses = new Regex(@"^((-?[0-9.]*)x?)([\+-]?[0-9.]*)$");

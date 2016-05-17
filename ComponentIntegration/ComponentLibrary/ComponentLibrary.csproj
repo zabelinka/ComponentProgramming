@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Computations.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="IQuadratureMethod.cs">
       <SubType>Component</SubType>
     </Compile>
