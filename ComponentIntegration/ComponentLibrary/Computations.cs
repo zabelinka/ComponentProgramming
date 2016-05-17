@@ -36,7 +36,35 @@ namespace ComponentLibrary
 
     public class DerivativeComponent : Component
     {
+        private double a;
+        private double b;
+        private double c;
+        public DerivativeComponent(double[] coefs)
+        {
+            a = coefs[0];
+            b = coefs[1];
+            c = coefs[2];
+        }
 
+        public double calculate(double x, int order){
+            if (order == 1)
+            {
+                return a * (b * x / (b * x + c) + Math.Log(b * x + c));
+            }
+            if (order > 4)
+            {
+                return Double.NaN;
+            }
+            else
+            {
+                double result = Math.Pow(-1, order - 1);
+                result *= Math.Floor(order / 2.0);
+                result *= a * Math.Pow(b, order - 1) * (b * x + order * c);
+                result /= Math.Pow(b * x + c, order);
+                return result;
+            }
+        }
+        
     }
 
 }

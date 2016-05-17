@@ -18,10 +18,31 @@ namespace ComponentLibrary
 
     public class RectangleMethod : Component, IQuadratureMethod
     {
+        private int stepCount(double lowerLimit, double upperLimit, double[] coefs, double eps)
+        {
+            const int N = 100;
+            double h = (upperLimit - lowerLimit) / N;
+            double[] xx = new double[N];
+            double[] yy = new double[N];        // the array of derivative values
+
+            DerivativeComponent derivative = new DerivativeComponent(coefs);
+            for (int i = 0; i < N; i++)
+            {
+                xx[i] = lowerLimit + h * i;
+                yy[i] = derivative.calculate(xx[i], 1);
+            }
+            derivative.Dispose();
+
+            double MaxDerivative = yy.Max();
+
+            return (int)Math.Floor(Math.Pow(upperLimit - lowerLimit, 2) / (2 * eps) * MaxDerivative);
+        }
+
+
         public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            double M = 0;
-            int N = (int) Math.Floor(Math.Pow(upperLimit - lowerLimit, 2) / (2 * eps) * M);
+
+            int N = stepCount(lowerLimit, upperLimit, coefs, eps);      
             double h = (upperLimit - lowerLimit) / N;     // step
             double result = 0;
 
