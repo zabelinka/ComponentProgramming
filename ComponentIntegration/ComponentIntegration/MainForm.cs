@@ -134,20 +134,10 @@ namespace ComponentIntegration
             }
            
             // calculate and write answer
-            answerTB.Text = "Коэффициенты: " + Environment.NewLine;
-            for (int i = 0; i < coefs.Length; ++i)
-            {
-                answerTB.Text += coefs[i] + " ";
-            }
-
-            answerTB.Text += Environment.NewLine + "Требуемая точность: " + eps + Environment.NewLine;
-            answerTB.Text += "Пределы интегрирования: " + lowerLimit + " " + upperLimit + Environment.NewLine;
-
-
             for (int i = 0; i < method.Length; i++)
             {
                 result = method[i].calculate(lowerLimit, upperLimit, coefs, eps);
-                answerTB.Text += method[i].name + result.ToString() + Environment.NewLine;
+                answerTB.Text += method[i].name + Environment.NewLine + result.ToString() + Environment.NewLine;
             }
 
             // высвобождение ресурсов компонентов

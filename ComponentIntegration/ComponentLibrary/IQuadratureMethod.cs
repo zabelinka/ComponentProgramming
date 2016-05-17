@@ -18,32 +18,46 @@ namespace ComponentLibrary
 
     public class RectangleMethod : Component, IQuadratureMethod
     {
-        private int stepCount(double lowerLimit, double upperLimit, double[] coefs, double eps)
+        double a;
+        double b;
+        double[] coefs;
+        double eps;
+
+        private int stepCount()
         {
             const int N = 100;
-            double h = (upperLimit - lowerLimit) / N;
+            double h = (b - a) / N;
             double[] xx = new double[N];
             double[] yy = new double[N];        // the array of derivative values
 
             DerivativeComponent derivative = new DerivativeComponent(coefs);
             for (int i = 0; i < N; i++)
             {
-                xx[i] = lowerLimit + h * i;
-                yy[i] = derivative.calculate(xx[i], 1);
+                xx[i] = a + h * i;
+                yy[i] = Math.Abs(derivative.calculate(xx[i], 1));
             }
             derivative.Dispose();
 
             double MaxDerivative = yy.Max();
 
-            return (int)Math.Floor(Math.Pow(upperLimit - lowerLimit, 2) / (2 * eps) * MaxDerivative);
+            double result = Math.Pow(b - a, 2) / (2 * eps) * MaxDerivative;
+            if (Double.IsNaN(result) || result < 1)
+            {
+                return 1;
+            }
+            return (int)Math.Floor(result);
         }
-
 
         public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
+            this.a = lowerLimit;
+            this.b = upperLimit;
+            this.coefs = coefs;
+            this.eps = eps;
 
-            int N = stepCount(lowerLimit, upperLimit, coefs, eps);      
-            double h = (upperLimit - lowerLimit) / N;     // step
+
+            int N = stepCount();      
+            double h = (b - a) / N;     // step
             double result = 0;
 
             FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
@@ -51,12 +65,13 @@ namespace ComponentLibrary
             // left corner approximation
             for (int i = 0; i < N; i++)
             {
-                double x = lowerLimit + h * i;
+                double x = a + h * i;
                 result += funValComp.calculate(x); 
             }
             funValComp.Dispose();
             return result * h;
         }
+        
         string IQuadratureMethod.name { 
             get { return "Метод прямоугольников: "; }
         }
@@ -64,10 +79,46 @@ namespace ComponentLibrary
 
     public class TrapezeMethod : Component, IQuadratureMethod
     {
+        double a;
+        double b;
+        double[] coefs;
+        double eps;
+
+        private int stepCount()
+        {
+            const int N = 100;
+            double h = (b - a) / N;
+            double[] xx = new double[N];
+            double[] yy = new double[N];        // the array of derivative values
+
+            DerivativeComponent derivative = new DerivativeComponent(coefs);
+            for (int i = 0; i < N; i++)
+            {
+                xx[i] = a + h * i;
+                yy[i] = Math.Abs(derivative.calculate(xx[i], 2));
+            }
+            derivative.Dispose();
+
+            double MaxDerivative = yy.Max();
+
+            double result = Math.Sqrt(Math.Pow(b - a, 3) / (12 * eps) * MaxDerivative);
+            if (Double.IsNaN(result) || result < 1)
+            {
+                return 1;
+            }
+            return (int)Math.Floor(result);
+        }
+
         public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
-            double h = (upperLimit - lowerLimit) / N;     // step
+            this.a = lowerLimit;
+            this.b = upperLimit;
+            this.coefs = coefs;
+            this.eps = eps;
+
+
+            int N = stepCount();
+            double h = (b - a) / N;     // step
             double result = 0;
 
             FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
@@ -81,18 +132,61 @@ namespace ComponentLibrary
             funValComp.Dispose();
             return result * h;
         }
+
         string IQuadratureMethod.name
         {
             get { return "Метод трапеций: "; }
         }
     }
 
+
+
+
+
+
+
     public class SimpsonMethod : Component, IQuadratureMethod
     {
+        double a;
+        double b;
+        double[] coefs;
+        double eps;
+
+        private int stepCount()
+        {
+            const int N = 100;
+            double h = (b - a) / N;
+            double[] xx = new double[N];
+            double[] yy = new double[N];        // the array of derivative values
+
+            DerivativeComponent derivative = new DerivativeComponent(coefs);
+            for (int i = 0; i < N; i++)
+            {
+                xx[i] = a + h * i;
+                yy[i] = Math.Abs(derivative.calculate(xx[i], 4));
+            }
+            derivative.Dispose();
+
+            double MaxDerivative = yy.Max();
+
+            double result = Math.Pow(Math.Pow(b - a, 5) / (180 * eps) * MaxDerivative, 0.25);
+            if (Double.IsNaN(result) || result < 1)
+            {
+                return 1;
+            }
+            return (int)Math.Floor(result);
+        }
+
         public double calculate(double lowerLimit, double upperLimit, double[] coefs, double eps)
         {
-            int N = 100;            // ОПРЕДЕЛИТЬ ЧИСЛО ШАГОВ ИЗ ПОГРЕШНОСТИ
-            double h = (upperLimit - lowerLimit) / N;     // step
+            this.a = lowerLimit;
+            this.b = upperLimit;
+            this.coefs = coefs;
+            this.eps = eps;
+
+            
+            int N = stepCount();
+            double h = (b - a) / N;     // step
             double result = 0;
 
             FunctionValueComponent funValComp = new FunctionValueComponent(coefs);
@@ -106,6 +200,7 @@ namespace ComponentLibrary
             funValComp.Dispose();
             return result * h / 6.0;
         }
+
         string IQuadratureMethod.name
         {
             get { return "Метод Симпсона: "; }
